@@ -12,11 +12,13 @@ public class ReviewRepository {
     private final List<Review> reviews = new ArrayList<>();
 
     public void save(Review review) {
+        remove(review);
         reviews.add(review);
     }
 
     public void remove(Review review) {
-        reviews.remove(review);
+        reviews.removeIf(r -> r.getVisitorId().equals(review.getVisitorId())
+                && r.getRestaurantId().equals(review.getRestaurantId()));
     }
 
     public List<Review> findAll() {
