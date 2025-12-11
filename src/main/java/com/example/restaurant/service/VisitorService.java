@@ -24,38 +24,32 @@ public class VisitorService {
     }
 
     public VisitorResponseDto getById(Long id) {
-        Visitor visitor = visitorRepository.findById(id);
-        if (visitor == null) {
-            throw new IllegalArgumentException("Visitor with id=" + id + " not found");
-        }
+        Visitor visitor = visitorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Visitor with id=" + id + " not found"));
         return visitorMapper.toDto(visitor);
     }
 
     public VisitorResponseDto create(VisitorRequestDto dto) {
         Visitor visitor = visitorMapper.toEntity(dto);
-        visitorRepository.save(visitor);
-        return visitorMapper.toDto(visitor);
+        Visitor saved = visitorRepository.save(visitor);
+        return visitorMapper.toDto(saved);
     }
 
     public VisitorResponseDto update(Long id, VisitorRequestDto dto) {
-        Visitor existing = visitorRepository.findById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Visitor with id=" + id + " not found");
-        }
+        Visitor existing = visitorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Visitor with id=" + id + " not found"));
 
         existing.setName(dto.name());
         existing.setAge(dto.age());
         existing.setGender(dto.gender());
 
-        visitorRepository.save(existing);
-        return visitorMapper.toDto(existing);
+        Visitor saved = visitorRepository.save(existing);
+        return visitorMapper.toDto(saved);
     }
 
     public void delete(Long id) {
-        Visitor existing = visitorRepository.findById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Visitor with id=" + id + " not found");
-        }
-        visitorRepository.remove(existing);
+        Visitor existing = visitorRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Visitor with id=" + id + " not found"));
+        visitorRepository.delete(existing);
     }
 }
