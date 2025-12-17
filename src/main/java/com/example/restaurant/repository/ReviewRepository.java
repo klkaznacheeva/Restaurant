@@ -1,35 +1,14 @@
 package com.example.restaurant.repository;
 
 import com.example.restaurant.entity.Review;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public class ReviewRepository {
+public interface ReviewRepository extends JpaRepository<Review, Long> {
 
-    private final List<Review> reviews = new ArrayList<>();
+    Optional<Review> findByVisitor_IdAndRestaurant_Id(Long visitorId, Long restaurantId);
 
-    public void save(Review review) {
-        remove(review);
-        reviews.add(review);
-    }
-
-    public void remove(Review review) {
-        reviews.removeIf(r -> r.getVisitorId().equals(review.getVisitorId())
-                && r.getRestaurantId().equals(review.getRestaurantId()));
-    }
-
-    public List<Review> findAll() {
-        return new ArrayList<>(reviews);
-    }
-
-    public Review findById(Long visitorId, Long restaurantId) {
-        return reviews.stream()
-                .filter(r -> r.getVisitorId().equals(visitorId)
-                        && r.getRestaurantId().equals(restaurantId))
-                .findFirst()
-                .orElse(null);
-    }
+    List<Review> findAllByRestaurant_Id(Long restaurantId);
 }

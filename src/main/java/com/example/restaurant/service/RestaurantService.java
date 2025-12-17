@@ -25,40 +25,34 @@ public class RestaurantService {
     }
 
     public RestaurantResponseDto getById(Long id) {
-        Restaurant restaurant = restaurantRepository.findById(id);
-        if (restaurant == null) {
-            throw new IllegalArgumentException("Restaurant with id=" + id + " not found");
-        }
+        Restaurant restaurant = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant with id=" + id + " not found"));
         return restaurantMapper.toDto(restaurant);
     }
 
     public RestaurantResponseDto create(RestaurantRequestDto dto) {
         Restaurant restaurant = restaurantMapper.toEntity(dto);
         restaurant.setRating(BigDecimal.ZERO);
-        restaurantRepository.save(restaurant);
-        return restaurantMapper.toDto(restaurant);
+        Restaurant saved = restaurantRepository.save(restaurant);
+        return restaurantMapper.toDto(saved);
     }
 
     public RestaurantResponseDto update(Long id, RestaurantRequestDto dto) {
-        Restaurant existing = restaurantRepository.findById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Restaurant with id=" + id + " not found");
-        }
+        Restaurant existing = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant with id=" + id + " not found"));
 
         existing.setName(dto.name());
         existing.setDescription(dto.description());
         existing.setKitchenType(dto.kitchenType());
         existing.setAverageCheck(dto.averageCheck());
 
-        restaurantRepository.save(existing);
-        return restaurantMapper.toDto(existing);
+        Restaurant saved = restaurantRepository.save(existing);
+        return restaurantMapper.toDto(saved);
     }
 
     public void delete(Long id) {
-        Restaurant existing = restaurantRepository.findById(id);
-        if (existing == null) {
-            throw new IllegalArgumentException("Restaurant with id=" + id + " not found");
-        }
-        restaurantRepository.remove(existing);
+        Restaurant existing = restaurantRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Restaurant with id=" + id + " not found"));
+        restaurantRepository.delete(existing);
     }
 }
